@@ -11,7 +11,7 @@ import { Outlet, useLocation, useSearchParams } from "react-router";
 
 export default function NotesLayout() {
   const items = useNotesStore((state) => state.items);
-  const getItems = useNotesStore((state) => state.getItems);
+  const loadNotes = useNotesStore((state) => state.loadNotes);
   const location = useLocation();
   const [searchParams] = useSearchParams();
   const isNotesHome = location.pathname === NOTES_ROUTES.HOME;
@@ -22,8 +22,8 @@ export default function NotesLayout() {
   );
 
   useEffect(() => {
-    void getItems({ search, tags: selectedTags });
-  }, [getItems, search, selectedTags]);
+    void loadNotes({ search, tags: selectedTags });
+  }, [loadNotes, search, selectedTags]);
 
   return (
     <div className="min-h-svh bg-muted/30 p-0 sm:p-4 lg:p-6">

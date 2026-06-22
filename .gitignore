@@ -15,6 +15,7 @@ dist-ssr
 # Local AI working files
 .ai-docs/
 .agents/
+e2e-local/
 
 # Editor directories and files
 .vscode/*

@@ -7,11 +7,12 @@ import type { Note } from "./types";
 export type NotesStore = {
   items: Note[];
   tags: string[];
+  hasLoadedTags: boolean;
   filters: NoteFilters;
   createNote: (note: Note) => Promise<void>;
-  getItems: (filters?: NoteFilters) => Promise<Note[]>;
+  loadNotes: (filters?: NoteFilters) => Promise<Note[]>;
   getItemById: (id: string) => Promise<Note | undefined>;
-  getTags: () => Promise<void>;
+  loadTags: () => Promise<void>;
   updateNote: (note: Note) => Promise<void>;
   deleteNote: (id: string) => Promise<void>;
 };
@@ -20,18 +21,19 @@ export function createNotesStore(repository: NotesRepository) {
   return create<NotesStore>((set, get) => ({
     items: [],
     tags: [],
+    hasLoadedTags: false,
     filters: {},
 
     createNote: async (note) => {
       await repository.create(note);
 
       await Promise.all([
-        get().getItems(get().filters),
-        get().getTags(),
+        get().loadNotes(get().filters),
+        get().loadTags(),
       ]);
     },
 
-    getItems: async (filters = {}) => {
+    loadNotes: async (filters = {}) => {
       const items = filterNotes(await repository.getAll(), filters);
 
       set({ items, filters });
@@ -49,8 +51,8 @@ export function createNotesStore(repository: NotesRepository) {
       }
 
       await Promise.all([
-        get().getItems(get().filters),
-        get().getTags(),
+        get().loadNotes(get().filters),
+        get().loadTags(),
       ]);
     },
 
@@ -58,13 +60,16 @@ export function createNotesStore(repository: NotesRepository) {
       await repository.delete(id);
 
       await Promise.all([
-        get().getItems(get().filters),
-        get().getTags(),
+        get().loadNotes(get().filters),
+        get().loadTags(),
       ]);
     },
 
-    getTags: async () => {
-      set({ tags: await repository.getTags() });
+    loadTags: async () => {
+      set({
+        tags: await repository.getTags(),
+        hasLoadedTags: true,
+      });
     },
   }));
 }

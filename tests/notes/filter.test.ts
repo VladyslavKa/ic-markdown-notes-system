@@ -1,12 +1,15 @@
 import { describe, expect, it } from "vitest";
-import { filterNotes } from "@/entities/notes/filter";
+import {
+  filterNotes,
+  removeUnavailableTagFilters,
+} from "@/entities/notes/filter";
 import type { Note } from "@/entities/notes/types";
 
 const notes: Note[] = [
   {
     id: "note-1",
     title: "React patterns",
-    content: "Notes about component composition",
+    body: "Notes about component composition",
     tags: ["work", "react"],
     createdAt: "2026-06-22T10:00:00.000Z",
     updatedAt: "2026-06-22T10:00:00.000Z",
@@ -14,7 +17,7 @@ const notes: Note[] = [
   {
     id: "note-2",
     title: "Shopping list",
-    content: "Coffee and oat milk",
+    body: "Coffee and oat milk",
     tags: ["personal"],
     createdAt: "2026-06-22T11:00:00.000Z",
     updatedAt: "2026-06-22T11:00:00.000Z",
@@ -30,7 +33,7 @@ describe("filterNotes", () => {
     expect(filterNotes(notes, { search: "  REACT " })).toEqual([notes[0]]);
   });
 
-  it("searches note content", () => {
+  it("searches note body", () => {
     expect(filterNotes(notes, { search: "oat milk" })).toEqual([notes[1]]);
   });
 
@@ -53,5 +56,27 @@ describe("filterNotes", () => {
     expect(
       filterNotes(notes, { search: "component", tags: ["react"] }),
     ).toEqual([notes[0]]);
+  });
+});
+
+describe("removeUnavailableTagFilters", () => {
+  it("removes stale tags and preserves other query parameters", () => {
+    const searchParams = new URLSearchParams(
+      "search=react&tags=removed&tags=work",
+    );
+
+    const result = removeUnavailableTagFilters(searchParams, ["work"]);
+
+    expect(result.get("search")).toBe("react");
+    expect(result.getAll("tags")).toEqual(["work"]);
+    expect(searchParams.getAll("tags")).toEqual(["removed", "work"]);
+  });
+
+  it("returns the same params when every selected tag exists", () => {
+    const searchParams = new URLSearchParams("tags=work");
+
+    expect(removeUnavailableTagFilters(searchParams, ["work"])).toBe(
+      searchParams,
+    );
   });
 });

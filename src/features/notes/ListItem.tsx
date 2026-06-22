@@ -31,7 +31,14 @@ export default function NotesListItem({ note }: NotesListItemProps) {
   const handleDelete = async () => {
     await deleteNote(note.id);
     setDeleteOpen(false);
-    navigate({ pathname: NOTES_ROUTES.HOME, search: location.search });
+
+    const isDeletedNoteOpen =
+      location.pathname === getNoteViewRoute(note.id) ||
+      location.pathname === getNoteEditRoute(note.id);
+
+    if (isDeletedNoteOpen) {
+      navigate({ pathname: NOTES_ROUTES.HOME, search: location.search });
+    }
   };
 
   return (
@@ -89,7 +96,7 @@ export default function NotesListItem({ note }: NotesListItemProps) {
 
       <CardContent className="pointer-events-none flex flex-col gap-3 px-3">
         <p className="line-clamp-2 min-h-10 text-xs leading-5 whitespace-pre-line text-muted-foreground">
-          {note.content}
+          {note.body}
         </p>
 
         <div className="flex items-end justify-between gap-3">

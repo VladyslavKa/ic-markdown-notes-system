@@ -6,7 +6,7 @@ import type { Note } from "@/entities/notes/types";
 const initialNote: Note = {
   id: "note-1",
   title: "React patterns",
-  content: "Component composition",
+  body: "Component composition",
   tags: ["react", "work"],
   createdAt: "2026-06-22T10:00:00.000Z",
   updatedAt: "2026-06-22T10:00:00.000Z",
@@ -18,7 +18,7 @@ describe("notes store", () => {
     const store = createNotesStore(repository);
 
     await expect(
-      store.getState().getItems({ search: "composition" }),
+      store.getState().loadNotes({ search: "composition" }),
     ).resolves.toEqual([initialNote]);
     expect(store.getState().items).toEqual([initialNote]);
   });
@@ -53,15 +53,16 @@ describe("notes store", () => {
   it("loads tags through the repository", async () => {
     const store = createNotesStore(createMemoryRepository([initialNote]));
 
-    await store.getState().getTags();
+    await store.getState().loadTags();
 
     expect(store.getState().tags).toEqual(["react", "work"]);
+    expect(store.getState().hasLoadedTags).toBe(true);
   });
 
   it("reapplies active filters after updating a note", async () => {
     const store = createNotesStore(createMemoryRepository([initialNote]));
 
-    await store.getState().getItems({ tags: ["work"] });
+    await store.getState().loadNotes({ tags: ["work"] });
     await store.getState().updateNote({
       ...initialNote,
       tags: ["personal"],
@@ -75,8 +76,8 @@ describe("notes store", () => {
   it("removes unused tags after deleting a note", async () => {
     const store = createNotesStore(createMemoryRepository([initialNote]));
 
-    await store.getState().getItems();
-    await store.getState().getTags();
+    await store.getState().loadNotes();
+    await store.getState().loadTags();
     await store.getState().deleteNote(initialNote.id);
 
     expect(store.getState().items).toEqual([]);

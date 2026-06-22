@@ -4,8 +4,26 @@ import type { Note } from "./types";
 
 const NOTES_KEY = "ic_notes";
 
+type StoredNote = Omit<Note, "body"> & {
+  body?: string;
+  content?: string;
+};
+
 async function getNotes() {
-  return (await getDataByKey<Note[]>(NOTES_KEY)) ?? [];
+  const storedNotes = (await getDataByKey<StoredNote[]>(NOTES_KEY)) ?? [];
+  const hasLegacyNotes = storedNotes.some(
+    (note) => note.body === undefined && note.content !== undefined,
+  );
+  const notes = storedNotes.map(({ content, ...note }) => ({
+    ...note,
+    body: note.body ?? content ?? "",
+  }));
+
+  if (hasLegacyNotes) {
+    await setDataByKey<Note[]>(NOTES_KEY, notes);
+  }
+
+  return notes;
 }
 
 export const localStorageNotesRepository: NotesRepository = {
@@ -29,7 +47,11 @@ export const localStorageNotesRepository: NotesRepository = {
 
     if (!currentNote) return null;
 
-    const updatedNote = { ...currentNote, ...patch };
+    const updatedNote = {
+      ...currentNote,
+      ...patch,
+      updatedAt: new Date().toISOString(),
+    };
     const updatedNotes = notes.map((note) =>
       note.id === id ? updatedNote : note,
     );

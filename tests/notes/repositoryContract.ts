@@ -7,7 +7,7 @@ type RepositoryFactory = () => NotesRepository;
 const firstNote: Note = {
   id: "note-1",
   title: "First note",
-  content: "First content",
+  body: "First content",
   tags: ["work", "shared"],
   createdAt: "2026-06-22T10:00:00.000Z",
   updatedAt: "2026-06-22T10:00:00.000Z",
@@ -46,9 +46,15 @@ export function describeNotesRepository(
     it("updates an existing note and rejects a missing note", async () => {
       await repository.create(firstNote);
 
-      await expect(
-        repository.update(firstNote.id, { title: "Updated" }),
-      ).resolves.toMatchObject({ id: firstNote.id, title: "Updated" });
+      const updatedNote = await repository.update(firstNote.id, {
+        title: "Updated",
+      });
+
+      expect(updatedNote).toMatchObject({
+        id: firstNote.id,
+        title: "Updated",
+      });
+      expect(updatedNote?.updatedAt).not.toBe(firstNote.updatedAt);
       await expect(
         repository.update("missing", { title: "Updated" }),
       ).resolves.toBeNull();

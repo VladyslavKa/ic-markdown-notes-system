@@ -1,13 +1,12 @@
-import { Button } from "@/components/ui/button";
-import { getNoteViewRoute, NOTES_ROUTES } from "@/entities/notes/const";
+import { getNoteViewRoute } from "@/entities/notes/const";
 import { useNotesStore } from "@/entities/notes/store";
 import type { Note } from "@/entities/notes/types";
 import { useNote } from "@/entities/notes/useNote";
+import NotesBackButton from "@/features/notes/BackButton";
 import NotesEditor from "@/features/notes/Editor";
 import { NoteLoadFallback } from "@/features/notes/LoadState";
-import { ArrowLeftIcon } from "lucide-react";
 import { useState } from "react";
-import { NavLink, useLocation, useNavigate, useParams } from "react-router";
+import { useLocation, useNavigate, useParams } from "react-router";
 
 export default function NoteItemEditPage() {
   const { id } = useParams<{ id: string }>();
@@ -36,19 +35,7 @@ export default function NoteItemEditPage() {
 
   return (
     <div className="flex min-h-full flex-col gap-4 p-4 sm:p-6">
-      <Button
-        render={
-          <NavLink
-            to={{ pathname: NOTES_ROUTES.HOME, search: location.search }}
-          />
-        }
-        nativeButton={false}
-        variant="ghost"
-        className="w-fit lg:hidden"
-      >
-        <ArrowLeftIcon data-icon="inline-start" />
-        Notes
-      </Button>
+      <NotesBackButton />
 
       <div className="flex min-h-0 flex-col gap-4">
         <h1 className="text-xl font-semibold">Edit note</h1>

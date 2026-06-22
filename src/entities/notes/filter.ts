@@ -1,4 +1,5 @@
 import type { Note } from "./types";
+import { NOTES_TAGS_QUERY_NAME } from "./const";
 
 export interface NoteFilters {
   search?: string;
@@ -17,7 +18,7 @@ export function filterNotes(
     const matchesSearch =
       !query ||
       note.title.toLowerCase().includes(query) ||
-      note.content.toLowerCase().includes(query);
+      note.body.toLowerCase().includes(query);
 
     const matchesTags = tags.every((tag) =>
       (note.tags ?? []).includes(tag),
@@ -25,4 +26,23 @@ export function filterNotes(
 
     return matchesSearch && matchesTags;
   });
+}
+
+export function removeUnavailableTagFilters(
+  searchParams: URLSearchParams,
+  availableTags: string[],
+) {
+  const selectedTags = searchParams.getAll(NOTES_TAGS_QUERY_NAME);
+  const validTags = selectedTags.filter((tag) => availableTags.includes(tag));
+
+  if (validTags.length === selectedTags.length) return searchParams;
+
+  const nextParams = new URLSearchParams(searchParams);
+
+  nextParams.delete(NOTES_TAGS_QUERY_NAME);
+  validTags.forEach((tag) => {
+    nextParams.append(NOTES_TAGS_QUERY_NAME, tag);
+  });
+
+  return nextParams;
 }

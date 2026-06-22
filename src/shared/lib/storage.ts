@@ -17,8 +17,3 @@ export async function setDataByKey<T>(key: string, value: T) {
   const storage = getStorage();
   storage.setItem(key, JSON.stringify(value));
 }
-
-export async function deleteDataByKey(key: string) {
-  const storage = getStorage();
-  storage.removeItem(key);
-}
