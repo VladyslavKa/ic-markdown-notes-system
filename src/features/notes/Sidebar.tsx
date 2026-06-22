@@ -1,19 +1,28 @@
 import { Button } from "@/components/ui/button";
 import { NOTES_ROUTES } from "@/entities/notes/const";
 import type { Note } from "@/entities/notes/types";
+import { cn } from "@/lib/utils";
 import { PlusIcon } from "lucide-react";
-import { NavLink } from "react-router";
+import { NavLink, useLocation } from "react-router";
 import NotesFilter from "./Filter";
 import NotesList from "./List";
 import NotesSearch from "./Search";
 
 interface NotesSidebarProps {
   items: Note[];
+  className?: string;
 }
 
-export default function NotesSidebar({ items }: NotesSidebarProps) {
+export default function NotesSidebar({ items, className }: NotesSidebarProps) {
+  const location = useLocation();
+
   return (
-    <aside className="flex min-h-0 flex-col border-sidebar-border bg-sidebar text-sidebar-foreground lg:border-r">
+    <aside
+      className={cn(
+        "flex min-h-0 flex-col border-sidebar-border bg-sidebar text-sidebar-foreground lg:border-r",
+        className,
+      )}
+    >
       <header className="border-b border-sidebar-border p-4">
         <div className="mb-4">
           <p className="text-base font-semibold">Markdown Notes</p>
@@ -31,7 +40,14 @@ export default function NotesSidebar({ items }: NotesSidebarProps) {
             Notes
           </h1>
           <Button
-            render={<NavLink to={NOTES_ROUTES.CREATE} />}
+            render={
+              <NavLink
+                to={{
+                  pathname: NOTES_ROUTES.CREATE,
+                  search: location.search,
+                }}
+              />
+            }
             nativeButton={false}
             variant="ghost"
             size="icon-sm"

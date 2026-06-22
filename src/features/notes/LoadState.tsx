@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { NOTES_ROUTES } from "@/entities/notes/const";
 import type { NoteLoadState } from "@/entities/notes/useNote";
-import { NavLink } from "react-router";
+import { NavLink, useLocation } from "react-router";
 
 type NoteLoadFallbackStatus = Exclude<
   NoteLoadState["status"],
@@ -19,6 +19,7 @@ const messages: Record<NoteLoadFallbackStatus, string> = {
 };
 
 export function NoteLoadFallback({ status }: NoteLoadFallbackProps) {
+  const location = useLocation();
   const isLoading = status === "loading";
 
   return (
@@ -28,9 +29,17 @@ export function NoteLoadFallback({ status }: NoteLoadFallbackProps) {
     >
       <p>{messages[status]}</p>
       {!isLoading && (
-        <NavLink to={NOTES_ROUTES.HOME}>
-          <Button variant="outline">Back to Notes</Button>
-        </NavLink>
+        <Button
+          render={
+            <NavLink
+              to={{ pathname: NOTES_ROUTES.HOME, search: location.search }}
+            />
+          }
+          nativeButton={false}
+          variant="outline"
+        >
+          Back to Notes
+        </Button>
       )}
     </div>
   );

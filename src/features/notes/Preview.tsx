@@ -5,8 +5,9 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import type { Note } from "@/entities/notes/types";
-import Markdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import MarkdownContent from "@/shared/ui/MarkdownContent";
+import NoteTags from "./NoteTags";
+import NoteTime from "./NoteTime";
 
 interface NotePreviewProps {
   note: Note;
@@ -20,24 +21,12 @@ export default function NotePreview({ note }: NotePreviewProps) {
       </CardHeader>
 
       <CardContent>
-        {(note.tags ?? []).length > 0 && (
-          <div className="mb-4 flex flex-wrap gap-1.5" aria-label="Note tags">
-            {(note.tags ?? []).map((tag) => (
-              <span
-                key={tag}
-                className="rounded-md border border-border bg-muted px-2 py-0.5 text-xs text-muted-foreground"
-              >
-                #{tag}
-              </span>
-            ))}
-          </div>
-        )}
-
-        <Markdown remarkPlugins={[remarkGfm]}>{note.content}</Markdown>
+        <MarkdownContent>{note.content}</MarkdownContent>
       </CardContent>
 
-      <CardFooter>
-        <p>{note.createdAt}</p>
+      <CardFooter className="flex flex-wrap justify-between gap-3">
+        <NoteTags tags={note.tags ?? []} />
+        <NoteTime value={note.createdAt} className="text-xs" />
       </CardFooter>
     </Card>
   );

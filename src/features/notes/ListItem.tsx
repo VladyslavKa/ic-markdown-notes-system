@@ -4,13 +4,19 @@ import {
   CardContent,
   CardHeader,
 } from "@/components/ui/card";
-import { NOTES_ROUTES } from "@/entities/notes/const";
+import {
+  getNoteEditRoute,
+  getNoteViewRoute,
+  NOTES_ROUTES,
+} from "@/entities/notes/const";
 import { useNotesStore } from "@/entities/notes/store";
 import type { Note } from "@/entities/notes/types";
 import DialogConfirm from "@/shared/ui/DialogConfirm";
 import { PencilIcon, Trash2Icon } from "lucide-react";
 import { useState } from "react";
-import { NavLink, useNavigate } from "react-router";
+import { NavLink, useLocation, useNavigate } from "react-router";
+import NoteTags from "./NoteTags";
+import NoteTime from "./NoteTime";
 
 interface NotesListItemProps {
   note: Note;
@@ -18,32 +24,43 @@ interface NotesListItemProps {
 
 export default function NotesListItem({ note }: NotesListItemProps) {
   const [isDeleteOpen, setDeleteOpen] = useState(false);
+  const location = useLocation();
   const navigate = useNavigate();
   const deleteNote = useNotesStore((state) => state.deleteNote);
 
   const handleDelete = async () => {
     await deleteNote(note.id);
     setDeleteOpen(false);
-    navigate(NOTES_ROUTES.HOME);
+    navigate({ pathname: NOTES_ROUTES.HOME, search: location.search });
   };
 
   return (
     <Card
       size="sm"
-      className="gap-2 rounded-md py-3 shadow-none transition-colors hover:bg-muted/40"
+      className="relative gap-2 rounded-md py-3 shadow-none transition-colors hover:bg-muted/40 has-[a[aria-current=page]]:bg-muted/70"
       role="listitem"
     >
-      <CardHeader className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-2 px-3">
-        <NavLink
-          to={`/notes/${note.id}`}
-          className="min-w-0 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        >
-          <h3 className="truncate text-sm font-semibold">{note.title}</h3>
-        </NavLink>
+      <NavLink
+        to={{ pathname: getNoteViewRoute(note.id), search: location.search }}
+        className="absolute inset-0 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        aria-label={`Open ${note.title}`}
+      />
 
-        <div className="flex items-center gap-0.5">
+      <CardHeader className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-2 px-3">
+        <div className="pointer-events-none min-w-0">
+          <h3 className="truncate text-sm font-semibold">{note.title}</h3>
+        </div>
+
+        <div className="relative z-10 flex items-center gap-0.5">
           <Button
-            render={<NavLink to={`/notes/${note.id}/edit`} />}
+            render={
+              <NavLink
+                to={{
+                  pathname: getNoteEditRoute(note.id),
+                  search: location.search,
+                }}
+              />
+            }
             nativeButton={false}
             variant="ghost"
             size="icon-xs"
@@ -70,41 +87,19 @@ export default function NotesListItem({ note }: NotesListItemProps) {
         </div>
       </CardHeader>
 
-      <CardContent className="flex flex-col gap-3 px-3">
+      <CardContent className="pointer-events-none flex flex-col gap-3 px-3">
         <p className="line-clamp-2 min-h-10 text-xs leading-5 whitespace-pre-line text-muted-foreground">
           {note.content}
         </p>
 
         <div className="flex items-end justify-between gap-3">
-          <div className="flex min-w-0 flex-wrap gap-1" aria-label="Note tags">
-            {(note.tags ?? []).slice(0, 3).map((tag) => (
-              <span
-                key={tag}
-                className="max-w-24 truncate rounded-sm bg-muted px-1.5 py-0.5 text-[0.7rem] text-muted-foreground"
-              >
-                #{tag}
-              </span>
-            ))}
-          </div>
-          <time
-            className="shrink-0 text-[0.7rem] text-muted-foreground"
-            dateTime={note.updatedAt}
-          >
-            {formatNoteDate(note.updatedAt)}
-          </time>
+          <NoteTags tags={note.tags ?? []} compact limit={3} />
+          <NoteTime
+            value={note.updatedAt}
+            className="shrink-0 text-[0.7rem]"
+          />
         </div>
       </CardContent>
     </Card>
   );
-}
-
-function formatNoteDate(value: string) {
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) return value;
-
-  return new Intl.DateTimeFormat(undefined, {
-    day: "2-digit",
-    month: "short",
-  }).format(date);
 }

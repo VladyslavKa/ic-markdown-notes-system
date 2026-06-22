@@ -51,7 +51,7 @@ export default function NotesFilterTags() {
         </h2>
       </div>
 
-      <div className="flex max-h-28 flex-wrap gap-1.5 overflow-y-auto pr-1">
+      <div className="flex max-h-28 flex-wrap content-start gap-1.5 overflow-y-auto pr-1 [scrollbar-gutter:stable]">
         {tags.map((tag) => {
           const isSelected = selectedTags.includes(tag);
 
