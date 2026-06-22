@@ -57,6 +57,31 @@ describe("notes store", () => {
 
     expect(store.getState().tags).toEqual(["react", "work"]);
   });
+
+  it("reapplies active filters after updating a note", async () => {
+    const store = createNotesStore(createMemoryRepository([initialNote]));
+
+    await store.getState().getItems({ tags: ["work"] });
+    await store.getState().updateNote({
+      ...initialNote,
+      tags: ["personal"],
+    });
+
+    expect(store.getState().items).toEqual([]);
+    expect(store.getState().filters).toEqual({ tags: ["work"] });
+    expect(store.getState().tags).toEqual(["personal"]);
+  });
+
+  it("removes unused tags after deleting a note", async () => {
+    const store = createNotesStore(createMemoryRepository([initialNote]));
+
+    await store.getState().getItems();
+    await store.getState().getTags();
+    await store.getState().deleteNote(initialNote.id);
+
+    expect(store.getState().items).toEqual([]);
+    expect(store.getState().tags).toEqual([]);
+  });
 });
 
 function createMemoryRepository(initialNotes: Note[] = []): NotesRepository {

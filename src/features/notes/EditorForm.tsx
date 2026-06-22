@@ -50,10 +50,7 @@ export default function NoteEditorForm({
       <CardContent>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <Field>
-            <FieldLabel
-              htmlFor="title"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <FieldLabel htmlFor="title">
               Title*
             </FieldLabel>
             <Input
@@ -61,24 +58,21 @@ export default function NoteEditorForm({
               name="title"
               type="text"
               value={model.title}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              className="mt-1"
               required
               onChange={handleChangeField}
             />
           </Field>
 
           <Field>
-            <FieldLabel
-              htmlFor="content"
-              className="block text-sm font-medium text-gray-700"
-            >
+            <FieldLabel htmlFor="content">
               Content*
             </FieldLabel>
             <Textarea
               id="content"
               name="content"
               value={model.content}
-              className="mt-1 block max-h-[50vh] w-full resize-y rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              className="mt-1 max-h-[50vh] resize-y"
               maxLength={NOTE_CONTENT_MAX_LENGTH}
               required
               onChange={handleChangeField}

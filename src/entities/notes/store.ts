@@ -7,6 +7,7 @@ import type { Note } from "./types";
 export type NotesStore = {
   items: Note[];
   tags: string[];
+  filters: NoteFilters;
   createNote: (note: Note) => Promise<void>;
   getItems: (filters?: NoteFilters) => Promise<Note[]>;
   getItemById: (id: string) => Promise<Note | undefined>;
@@ -16,22 +17,24 @@ export type NotesStore = {
 };
 
 export function createNotesStore(repository: NotesRepository) {
-  return create<NotesStore>((set) => ({
+  return create<NotesStore>((set, get) => ({
     items: [],
     tags: [],
+    filters: {},
 
     createNote: async (note) => {
       await repository.create(note);
 
-      set((state) => ({
-        items: [...state.items, note],
-      }));
+      await Promise.all([
+        get().getItems(get().filters),
+        get().getTags(),
+      ]);
     },
 
     getItems: async (filters = {}) => {
       const items = filterNotes(await repository.getAll(), filters);
 
-      set({ items });
+      set({ items, filters });
 
       return items;
     },
@@ -45,19 +48,19 @@ export function createNotesStore(repository: NotesRepository) {
         throw new Error(`Note ${note.id} was not found`);
       }
 
-      set((state) => ({
-        items: state.items.map((item) =>
-          item.id === savedNote.id ? savedNote : item,
-        ),
-      }));
+      await Promise.all([
+        get().getItems(get().filters),
+        get().getTags(),
+      ]);
     },
 
     deleteNote: async (id) => {
       await repository.delete(id);
 
-      set((state) => ({
-        items: state.items.filter((item) => item.id !== id),
-      }));
+      await Promise.all([
+        get().getItems(get().filters),
+        get().getTags(),
+      ]);
     },
 
     getTags: async () => {
