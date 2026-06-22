@@ -1,16 +1,10 @@
 import { create } from "zustand";
-import type { Note } from "./types";
 import { filterNotes, type NoteFilters } from "./filter";
-import {
-  createNote as createNoteInStorage,
-  deleteNote as deleteNoteFromStorage,
-  getNoteById as getNoteByIdFromStorage,
-  getNotes as getNotesFromStorage,
-  getNotesTags as getNotesTagsFromStorage,
-  updateNote as updateNoteInStorage,
-} from "./storage";
+import type { NotesRepository } from "./repository";
+import { localStorageNotesRepository } from "./localStorageNotesRepository";
+import type { Note } from "./types";
 
-type NotesStore = {
+export type NotesStore = {
   items: Note[];
   tags: string[];
   createNote: (note: Note) => Promise<void>;
@@ -21,50 +15,55 @@ type NotesStore = {
   deleteNote: (id: string) => Promise<void>;
 };
 
-export const useNotesStore = create<NotesStore>((set) => ({
-  items: [],
-  tags: [],
-  createNote: async (note) => {
-    await createNoteInStorage(note);
+export function createNotesStore(repository: NotesRepository) {
+  return create<NotesStore>((set) => ({
+    items: [],
+    tags: [],
 
-    set((state) => ({
-      items: [...state.items, note],
-    }));
-  },
-  getItems: async (filters = {}) => {
-    const storedItems = (await getNotesFromStorage()) ?? [];
-    const items = filterNotes(storedItems, filters);
+    createNote: async (note) => {
+      await repository.create(note);
 
-    set({ items });
+      set((state) => ({
+        items: [...state.items, note],
+      }));
+    },
 
-    return items;
-  },
-  getItemById: async (id) => {
-    return getNoteByIdFromStorage(id);
-  },
-  updateNote: async (note: Note) => {
-    const savedNote = await updateNoteInStorage(note.id, note);
+    getItems: async (filters = {}) => {
+      const items = filterNotes(await repository.getAll(), filters);
 
-    if (!savedNote) {
-      throw new Error(`Note ${note.id} was not found`);
-    }
+      set({ items });
 
-    set((state) => ({
-      items: state.items.map((item) =>
-        item.id === savedNote.id ? savedNote : item,
-      ),
-    }));
-  },
-  deleteNote: async (id: string) => {
-    await deleteNoteFromStorage(id);
+      return items;
+    },
 
-    set((state) => ({
-      items: state.items.filter((item) => item.id !== id),
-    }));
-  },
-  getTags: async () => {
-    const tags = await getNotesTagsFromStorage();
+    getItemById: (id) => repository.getById(id),
 
-    set({ tags });
-  },
-}));
+    updateNote: async (note) => {
+      const savedNote = await repository.update(note.id, note);
+
+      if (!savedNote) {
+        throw new Error(`Note ${note.id} was not found`);
+      }
+
+      set((state) => ({
+        items: state.items.map((item) =>
+          item.id === savedNote.id ? savedNote : item,
+        ),
+      }));
+    },
+
+    deleteNote: async (id) => {
+      await repository.delete(id);
+
+      set((state) => ({
+        items: state.items.filter((item) => item.id !== id),
+      }));
+    },
+
+    getTags: async () => {
+      set({ tags: await repository.getTags() });
+    },
+  }));
+}
+
+export const useNotesStore = createNotesStore(localStorageNotesRepository);
