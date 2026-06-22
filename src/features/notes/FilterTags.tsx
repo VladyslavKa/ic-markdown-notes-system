@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { NOTES_TAGS_QUERY_NAME } from "@/entities/notes/const";
 import { useNotesStore } from "@/entities/notes/store";
+import { TagIcon } from "lucide-react";
 import { useEffect } from "react";
 import { useSearchParams } from "react-router";
 
@@ -39,12 +40,18 @@ export default function NotesFilterTags() {
   if (tags.length === 0) return null;
 
   return (
-    <section className="flex flex-col gap-2" aria-labelledby="tags-filter-title">
-      <h2 id="tags-filter-title" className="text-sm font-medium">
-        Tags
-      </h2>
+    <section className="flex flex-col gap-3" aria-labelledby="tags-filter-title">
+      <div className="flex items-center gap-2 text-muted-foreground">
+        <TagIcon className="size-3.5" aria-hidden="true" />
+        <h2
+          id="tags-filter-title"
+          className="text-xs font-semibold tracking-normal uppercase"
+        >
+          All tags
+        </h2>
+      </div>
 
-      <div className="flex flex-wrap gap-2">
+      <div className="flex max-h-28 flex-wrap gap-1.5 overflow-y-auto pr-1">
         {tags.map((tag) => {
           const isSelected = selectedTags.includes(tag);
 
@@ -52,9 +59,11 @@ export default function NotesFilterTags() {
             <Button
               key={tag}
               type="button"
-              size="sm"
-              variant={isSelected ? "default" : "outline"}
+              size="xs"
+              variant={isSelected ? "secondary" : "ghost"}
+              className="max-w-full justify-start rounded-md px-2"
               aria-pressed={isSelected}
+              title={isSelected ? `Remove ${tag} filter` : `Filter by ${tag}`}
               onClick={() => toggleTag(tag)}
             >
               #{tag}

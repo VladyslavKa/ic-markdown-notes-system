@@ -8,9 +8,11 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import type { ComponentProps, ReactNode } from "react";
 
 interface DialogConfirmProps {
-  triggerText: React.ReactNode;
+  triggerText: ReactNode;
+  triggerButtonProps?: Omit<ComponentProps<typeof Button>, "children">;
   title?: string;
   buttonSubmitText?: string;
   buttonCancelText?: string;
@@ -22,6 +24,7 @@ interface DialogConfirmProps {
 
 export default function DialogConfirm({
   triggerText,
+  triggerButtonProps,
   title = "Are you absolutely sure?",
   buttonSubmitText = "Confirm",
   buttonCancelText = "Cancel",
@@ -32,7 +35,9 @@ export default function DialogConfirm({
 }: DialogConfirmProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogTrigger render={<Button variant="destructive" />}>
+      <DialogTrigger
+        render={<Button variant="destructive" {...triggerButtonProps} />}
+      >
         {triggerText}
       </DialogTrigger>
       <DialogContent>

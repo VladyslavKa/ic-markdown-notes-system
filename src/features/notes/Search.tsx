@@ -3,6 +3,7 @@ import {
   NOTE_SEARCH_MAX_LENGTH,
   NOTES_SEARCH_QUERY_NAME,
 } from "@/entities/notes/const";
+import { SearchIcon } from "lucide-react";
 import { useSearchParams } from "react-router";
 
 export default function NotesSearch() {
@@ -27,12 +28,20 @@ export default function NotesSearch() {
   };
 
   return (
-    <Input
-      type="search"
-      placeholder="Search notes..."
-      value={searchQuery}
-      maxLength={NOTE_SEARCH_MAX_LENGTH}
-      onChange={(event) => handleChange(event.target.value)}
-    />
+    <div className="relative">
+      <SearchIcon
+        className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+        aria-hidden="true"
+      />
+      <Input
+        type="search"
+        aria-label="Search notes"
+        placeholder="Search notes..."
+        value={searchQuery}
+        maxLength={NOTE_SEARCH_MAX_LENGTH}
+        className="h-9 bg-background pr-3 pl-9"
+        onChange={(event) => handleChange(event.target.value)}
+      />
+    </div>
   );
 }

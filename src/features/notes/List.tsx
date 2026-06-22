@@ -1,7 +1,6 @@
 import type { Note } from "@/entities/notes/types";
 import NotesListItem from "./ListItem";
-import { NavLink } from "react-router";
-import { Button } from "@/components/ui/button";
+import { FileTextIcon } from "lucide-react";
 
 interface NotesListProps {
   items: Note[];
@@ -13,11 +12,7 @@ export default function NotesList({ items }: NotesListProps) {
   }
 
   return (
-    <div className="my-8">
-      <NavLink to="/notes/create">
-        <Button variant="outline">Create a new note</Button>
-      </NavLink>
-
+    <div className="flex flex-col gap-2" role="list">
       {items.map((item) => (
         <NotesListItem key={item.id} note={item} />
       ))}
@@ -27,11 +22,11 @@ export default function NotesList({ items }: NotesListProps) {
 
 function NotesListEmpty() {
   return (
-    <>
-      <div>No notes found.</div>{" "}
-      <NavLink to="/notes/create">
-        <Button variant="outline">Create a new note</Button>
-      </NavLink>
-    </>
+    <div className="flex min-h-40 flex-col items-center justify-center gap-3 px-6 text-center">
+      <div className="flex size-9 items-center justify-center rounded-md bg-muted text-muted-foreground">
+        <FileTextIcon className="size-4" aria-hidden="true" />
+      </div>
+      <p className="text-sm font-medium">No notes found</p>
+    </div>
   );
 }
