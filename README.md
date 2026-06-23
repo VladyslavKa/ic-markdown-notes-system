@@ -58,9 +58,9 @@ src/
 tests/notes/          Filtering, store, and repository contract tests
 ```
 
-The store depends on `NotesRepository`, not directly on `localStorage`. Repository methods are asynchronous to preserve the same application boundary when persistence changes. Mutations reload the active filtered list and derived tags to keep persisted and rendered state synchronized.
+The store depends on `NotesRepository`, not directly on `localStorage`. Repository methods are asynchronous to preserve the same application boundary when persistence changes. Mutations reload the full note collection and derived tags to keep persisted and rendered state synchronized.
 
-Search and tag filters are pure domain logic. The URL owns filter values, while Zustand owns loaded notes and mutations. Editor inputs are controlled so Markdown preview updates on every change.
+Search and tag filters are pure domain logic applied in memory to notes loaded into Zustand. The URL owns filter values, while Zustand owns the full note collection and mutations. Editor inputs are controlled so Markdown preview updates on every change.
 
 ## Data Model
 

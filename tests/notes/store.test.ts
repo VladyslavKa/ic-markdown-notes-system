@@ -13,13 +13,11 @@ const initialNote: Note = {
 };
 
 describe("notes store", () => {
-  it("loads and filters items through the repository", async () => {
+  it("loads all items through the repository", async () => {
     const repository = createMemoryRepository([initialNote]);
     const store = createNotesStore(repository);
 
-    await expect(
-      store.getState().loadNotes({ search: "composition" }),
-    ).resolves.toEqual([initialNote]);
+    await expect(store.getState().loadNotes()).resolves.toEqual([initialNote]);
     expect(store.getState().items).toEqual([initialNote]);
   });
 
@@ -59,17 +57,18 @@ describe("notes store", () => {
     expect(store.getState().hasLoadedTags).toBe(true);
   });
 
-  it("reapplies active filters after updating a note", async () => {
+  it("refreshes notes and tags after updating a note", async () => {
     const store = createNotesStore(createMemoryRepository([initialNote]));
 
-    await store.getState().loadNotes({ tags: ["work"] });
+    await store.getState().loadNotes();
     await store.getState().updateNote({
       ...initialNote,
       tags: ["personal"],
     });
 
-    expect(store.getState().items).toEqual([]);
-    expect(store.getState().filters).toEqual({ tags: ["work"] });
+    expect(store.getState().items).toEqual([
+      { ...initialNote, tags: ["personal"] },
+    ]);
     expect(store.getState().tags).toEqual(["personal"]);
   });
 

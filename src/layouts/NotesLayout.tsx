@@ -3,6 +3,7 @@ import {
   NOTES_SEARCH_QUERY_NAME,
   NOTES_TAGS_QUERY_NAME,
 } from "@/entities/notes/const";
+import { filterNotes } from "@/entities/notes/filter";
 import { useNotesStore } from "@/entities/notes/store";
 import NotesSidebar from "@/features/notes/Sidebar";
 import { cn } from "@/lib/utils";
@@ -20,16 +21,20 @@ export default function NotesLayout() {
     () => searchParams.getAll(NOTES_TAGS_QUERY_NAME),
     [searchParams],
   );
+  const filteredItems = useMemo(
+    () => filterNotes(items, { search, tags: selectedTags }),
+    [items, search, selectedTags],
+  );
 
   useEffect(() => {
-    void loadNotes({ search, tags: selectedTags });
-  }, [loadNotes, search, selectedTags]);
+    void loadNotes();
+  }, [loadNotes]);
 
   return (
     <div className="min-h-svh bg-muted/30 p-0 sm:p-4 lg:p-6">
       <div className="mx-auto grid min-h-svh max-w-7xl overflow-hidden border bg-background shadow-sm sm:min-h-[calc(100svh-2rem)] sm:rounded-md lg:h-[calc(100svh-3rem)] lg:min-h-0 lg:grid-cols-[22rem_minmax(0,1fr)]">
         <NotesSidebar
-          items={items}
+          items={filteredItems}
           className={cn(!isNotesHome && "hidden lg:flex")}
         />
 

@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import { filterNotes, type NoteFilters } from "./filter";
 import type { NotesRepository } from "./repository";
 import { localStorageNotesRepository } from "./localStorageNotesRepository";
 import type { Note } from "./types";
@@ -8,9 +7,8 @@ export type NotesStore = {
   items: Note[];
   tags: string[];
   hasLoadedTags: boolean;
-  filters: NoteFilters;
   createNote: (note: Note) => Promise<void>;
-  loadNotes: (filters?: NoteFilters) => Promise<Note[]>;
+  loadNotes: () => Promise<Note[]>;
   getItemById: (id: string) => Promise<Note | undefined>;
   loadTags: () => Promise<void>;
   updateNote: (note: Note) => Promise<void>;
@@ -22,21 +20,17 @@ export function createNotesStore(repository: NotesRepository) {
     items: [],
     tags: [],
     hasLoadedTags: false,
-    filters: {},
 
     createNote: async (note) => {
       await repository.create(note);
 
-      await Promise.all([
-        get().loadNotes(get().filters),
-        get().loadTags(),
-      ]);
+      await Promise.all([get().loadNotes(), get().loadTags()]);
     },
 
-    loadNotes: async (filters = {}) => {
-      const items = filterNotes(await repository.getAll(), filters);
+    loadNotes: async () => {
+      const items = await repository.getAll();
 
-      set({ items, filters });
+      set({ items });
 
       return items;
     },
@@ -50,19 +44,13 @@ export function createNotesStore(repository: NotesRepository) {
         throw new Error(`Note ${note.id} was not found`);
       }
 
-      await Promise.all([
-        get().loadNotes(get().filters),
-        get().loadTags(),
-      ]);
+      await Promise.all([get().loadNotes(), get().loadTags()]);
     },
 
     deleteNote: async (id) => {
       await repository.delete(id);
 
-      await Promise.all([
-        get().loadNotes(get().filters),
-        get().loadTags(),
-      ]);
+      await Promise.all([get().loadNotes(), get().loadTags()]);
     },
 
     loadTags: async () => {

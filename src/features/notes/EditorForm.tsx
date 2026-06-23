@@ -51,7 +51,6 @@ export default function NoteEditorForm({
     onChange({
       ...model,
       [name]: value,
-      updatedAt: new Date().toISOString(),
     });
   };
 
@@ -59,7 +58,6 @@ export default function NoteEditorForm({
     onChange({
       ...model,
       tags,
-      updatedAt: new Date().toISOString(),
     });
   };
 
