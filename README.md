@@ -37,14 +37,9 @@ npm run build
 npm run preview
 ```
 
-## Technical Decisions
+## Architecture Decision Records
 
-- **React + TypeScript + Vite:** a small typed SPA with fast local development and a simple production build.
-- **Zustand:** keeps shared note state and asynchronous mutations concise. Form draft state remains local to the editor.
-- **React Router:** nested routes keep the sidebar mounted while the detail view changes. Search and selected tags live in the URL so filtered views are bookmarkable.
-- **react-markdown + remark-gfm:** renders Markdown as React elements and supports tables, lists, and other GFM syntax without injecting raw HTML.
-- **localStorage:** appropriate for a small, single-user, local-first task. A repository interface isolates persistence from the store so IndexedDB or an API can replace it.
-- **Tailwind CSS + shadcn/ui:** provides reusable accessible primitives, responsive utilities, and token-based light/dark themes.
+Key decisions are documented in [`docs/adr/0001-client-side-architecture.md`](./docs/adr/0001-client-side-architecture.md).
 
 ## Architecture
 
@@ -78,16 +73,6 @@ interface Note {
 ```
 
 IDs use `crypto.randomUUID()`, and timestamps are ISO strings. Existing records using the former `content` field are migrated to `body` when read.
-
-## Decision Log
-
-| Decision | Alternative | Reason |
-| --- | --- | --- |
-| `localStorage` repository | IndexedDB | Less setup for the expected data size; repository boundary preserves migration options |
-| Zustand store | Redux or Context | Small API and limited shared state without reducer boilerplate |
-| URL filter state | Store-only filters | Refreshable and shareable search/filter state |
-| Controlled editor | Blur-based updates | Required for immediate preview and character count |
-| AND tag matching | OR matching | Multiple selected tags narrow results predictably |
 
 ## Testing
 
