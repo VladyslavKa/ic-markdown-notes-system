@@ -4,7 +4,9 @@ A local-first Markdown notes application built as a frontend coding task. Notes 
 
 ## Demo
 
-[Watch Demo Video](./public/demo.mp4)
+[Open Live App](https://ic-markdown-notes-system.vercel.app/)
+
+[Watch Demo Video](https://ic-markdown-notes-system.vercel.app/demo.mp4)
 
 ## Features
 
