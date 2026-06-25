@@ -5,12 +5,10 @@ import type { Note } from "./types";
 
 export type NotesStore = {
   items: Note[];
-  tags: string[];
-  hasLoadedTags: boolean;
+  hasLoadedNotes: boolean;
   createNote: (note: Note) => Promise<void>;
   loadNotes: () => Promise<Note[]>;
   getItemById: (id: string) => Promise<Note | undefined>;
-  loadTags: () => Promise<void>;
   updateNote: (note: Note) => Promise<void>;
   deleteNote: (id: string) => Promise<void>;
 };
@@ -18,19 +16,18 @@ export type NotesStore = {
 export function createNotesStore(repository: NotesRepository) {
   return create<NotesStore>((set, get) => ({
     items: [],
-    tags: [],
-    hasLoadedTags: false,
+    hasLoadedNotes: false,
 
     createNote: async (note) => {
       await repository.create(note);
 
-      await Promise.all([get().loadNotes(), get().loadTags()]);
+      await get().loadNotes();
     },
 
     loadNotes: async () => {
       const items = await repository.getAll();
 
-      set({ items });
+      set({ items, hasLoadedNotes: true });
 
       return items;
     },
@@ -44,20 +41,13 @@ export function createNotesStore(repository: NotesRepository) {
         throw new Error(`Note ${note.id} was not found`);
       }
 
-      await Promise.all([get().loadNotes(), get().loadTags()]);
+      await get().loadNotes();
     },
 
     deleteNote: async (id) => {
       await repository.delete(id);
 
-      await Promise.all([get().loadNotes(), get().loadTags()]);
-    },
-
-    loadTags: async () => {
-      set({
-        tags: await repository.getTags(),
-        hasLoadedTags: true,
-      });
+      await get().loadNotes();
     },
   }));
 }

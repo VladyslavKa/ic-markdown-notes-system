@@ -1,31 +1,30 @@
 import { Button } from "@/components/ui/button";
 import { NOTES_TAGS_QUERY_NAME } from "@/entities/notes/const";
-import { removeUnavailableTagFilters } from "@/entities/notes/filter";
+import {
+  getUniqueTags,
+  removeUnavailableTagFilters,
+} from "@/entities/notes/filter";
 import { useNotesStore } from "@/entities/notes/store";
 import { TagIcon } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router";
 
 export default function NotesFilterTags() {
-  const loadTags = useNotesStore((state) => state.loadTags);
-  const tags = useNotesStore((state) => state.tags);
-  const hasLoadedTags = useNotesStore((state) => state.hasLoadedTags);
+  const items = useNotesStore((state) => state.items);
+  const hasLoadedNotes = useNotesStore((state) => state.hasLoadedNotes);
+  const tags = useMemo(() => getUniqueTags(items), [items]);
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedTags = searchParams.getAll(NOTES_TAGS_QUERY_NAME);
 
   useEffect(() => {
-    void loadTags();
-  }, [loadTags]);
-
-  useEffect(() => {
-    if (!hasLoadedTags) return;
+    if (!hasLoadedNotes) return;
 
     const nextParams = removeUnavailableTagFilters(searchParams, tags);
 
     if (nextParams === searchParams) return;
 
     setSearchParams(nextParams, { replace: true });
-  }, [hasLoadedTags, searchParams, setSearchParams, tags]);
+  }, [hasLoadedNotes, searchParams, setSearchParams, tags]);
 
   const toggleTag = (tag: string) => {
     setSearchParams(

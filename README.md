@@ -13,7 +13,7 @@ A local-first Markdown notes application built as a frontend coding task. Notes 
 - Create, view, edit, and delete notes with confirmation
 - Split editor with live Markdown preview
 - Add, remove, and filter by multiple tags
-- Full-text search across titles and Markdown bodies
+- Full-text search across titles and Markdown content
 - Persistent notes via `localStorage`
 - Responsive layout down to a 375px viewport
 - Dark and light themes
@@ -55,7 +55,7 @@ src/
 tests/notes/          Filtering, store, and repository contract tests
 ```
 
-The store depends on `NotesRepository`, not directly on `localStorage`. Repository methods are asynchronous to preserve the same application boundary when persistence changes. Mutations reload the full note collection and derived tags to keep persisted and rendered state synchronized.
+The store depends on `NotesRepository`, not directly on `localStorage`. Repository methods are asynchronous to preserve the same application boundary when persistence changes. Mutations reload the full note collection to keep persisted and rendered state synchronized. Available tags are derived from the loaded notes.
 
 Search and tag filters are pure domain logic applied in memory to notes loaded into Zustand. The URL owns filter values, while Zustand owns the full note collection and mutations. Editor inputs are controlled so Markdown preview updates on every change.
 

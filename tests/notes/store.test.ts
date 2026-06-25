@@ -19,6 +19,7 @@ describe("notes store", () => {
 
     await expect(store.getState().loadNotes()).resolves.toEqual([initialNote]);
     expect(store.getState().items).toEqual([initialNote]);
+    expect(store.getState().hasLoadedNotes).toBe(true);
   });
 
   it("keeps repository and store in sync during CRUD", async () => {
@@ -48,16 +49,7 @@ describe("notes store", () => {
     );
   });
 
-  it("loads tags through the repository", async () => {
-    const store = createNotesStore(createMemoryRepository([initialNote]));
-
-    await store.getState().loadTags();
-
-    expect(store.getState().tags).toEqual(["react", "work"]);
-    expect(store.getState().hasLoadedTags).toBe(true);
-  });
-
-  it("refreshes notes and tags after updating a note", async () => {
+  it("refreshes notes after updating a note", async () => {
     const store = createNotesStore(createMemoryRepository([initialNote]));
 
     await store.getState().loadNotes();
@@ -69,18 +61,15 @@ describe("notes store", () => {
     expect(store.getState().items).toEqual([
       { ...initialNote, tags: ["personal"] },
     ]);
-    expect(store.getState().tags).toEqual(["personal"]);
   });
 
-  it("removes unused tags after deleting a note", async () => {
+  it("refreshes notes after deleting a note", async () => {
     const store = createNotesStore(createMemoryRepository([initialNote]));
 
     await store.getState().loadNotes();
-    await store.getState().loadTags();
     await store.getState().deleteNote(initialNote.id);
 
     expect(store.getState().items).toEqual([]);
-    expect(store.getState().tags).toEqual([]);
   });
 });
 

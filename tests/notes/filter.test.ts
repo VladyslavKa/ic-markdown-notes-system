@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   filterNotes,
+  getUniqueTags,
   removeUnavailableTagFilters,
 } from "@/entities/notes/filter";
 import type { Note } from "@/entities/notes/types";
@@ -56,6 +57,12 @@ describe("filterNotes", () => {
     expect(
       filterNotes(notes, { search: "component", tags: ["react"] }),
     ).toEqual([notes[0]]);
+  });
+});
+
+describe("getUniqueTags", () => {
+  it("returns unique sorted tags from notes", () => {
+    expect(getUniqueTags(notes)).toEqual(["personal", "react", "work"]);
   });
 });
 

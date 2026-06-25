@@ -28,6 +28,10 @@ export function filterNotes(
   });
 }
 
+export function getUniqueTags(notes: Note[]) {
+  return [...new Set(notes.flatMap((note) => note.tags ?? []))].sort();
+}
+
 export function removeUnavailableTagFilters(
   searchParams: URLSearchParams,
   availableTags: string[],
