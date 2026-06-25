@@ -7,7 +7,7 @@ type RepositoryFactory = () => NotesRepository;
 const firstNote: Note = {
   id: "note-1",
   title: "First note",
-  body: "First content",
+  content: "First content",
   tags: ["work", "shared"],
   createdAt: "2026-06-22T10:00:00.000Z",
   updatedAt: "2026-06-22T10:00:00.000Z",

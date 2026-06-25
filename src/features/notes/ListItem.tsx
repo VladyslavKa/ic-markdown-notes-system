@@ -96,7 +96,7 @@ export default function NotesListItem({ note }: NotesListItemProps) {
 
       <CardContent className="pointer-events-none flex flex-col gap-3 px-3">
         <p className="line-clamp-2 min-h-10 text-xs leading-5 whitespace-pre-line text-muted-foreground">
-          {note.body}
+          {note.content}
         </p>
 
         <div className="flex items-end justify-between gap-3">

@@ -9,7 +9,7 @@ const notes: Note[] = [
   {
     id: "note-1",
     title: "React patterns",
-    body: "Notes about component composition",
+    content: "Notes about component composition",
     tags: ["work", "react"],
     createdAt: "2026-06-22T10:00:00.000Z",
     updatedAt: "2026-06-22T10:00:00.000Z",
@@ -17,7 +17,7 @@ const notes: Note[] = [
   {
     id: "note-2",
     title: "Shopping list",
-    body: "Coffee and oat milk",
+    content: "Coffee and oat milk",
     tags: ["personal"],
     createdAt: "2026-06-22T11:00:00.000Z",
     updatedAt: "2026-06-22T11:00:00.000Z",
@@ -33,7 +33,7 @@ describe("filterNotes", () => {
     expect(filterNotes(notes, { search: "  REACT " })).toEqual([notes[0]]);
   });
 
-  it("searches note body", () => {
+  it("searches note content", () => {
     expect(filterNotes(notes, { search: "oat milk" })).toEqual([notes[1]]);
   });
 

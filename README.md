@@ -65,18 +65,18 @@ Search and tag filters are pure domain logic applied in memory to notes loaded i
 interface Note {
   id: string;
   title: string;
-  body: string;
+  content: string;
   tags: string[];
   createdAt: string;
   updatedAt: string;
 }
 ```
 
-IDs use `crypto.randomUUID()`, and timestamps are ISO strings. Existing records using the former `content` field are migrated to `body` when read.
+IDs use `crypto.randomUUID()`, and timestamps are ISO strings.
 
 ## Testing
 
-Vitest covers full-text and tag filtering, store synchronization after CRUD operations, and a reusable repository contract. The localStorage implementation is tested through that contract, including legacy data migration. This keeps domain and store tests independent of the persistence implementation.
+Vitest covers full-text and tag filtering, store synchronization after CRUD operations, and a reusable repository contract. The localStorage implementation is tested through that contract. This keeps domain and store tests independent of the persistence implementation.
 
 ## AI Assistance
 

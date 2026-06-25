@@ -6,7 +6,7 @@ import type { Note } from "@/entities/notes/types";
 const initialNote: Note = {
   id: "note-1",
   title: "React patterns",
-  body: "Component composition",
+  content: "Component composition",
   tags: ["react", "work"],
   createdAt: "2026-06-22T10:00:00.000Z",
   updatedAt: "2026-06-22T10:00:00.000Z",

@@ -24,7 +24,7 @@ export default function NotePreview({ note }: NotePreviewProps) {
       </CardHeader>
 
       <CardContent>
-        <MarkdownContent>{note.body}</MarkdownContent>
+        <MarkdownContent>{note.content}</MarkdownContent>
       </CardContent>
 
       <CardFooter className="flex flex-wrap justify-between gap-3">
