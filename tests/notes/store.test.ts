@@ -95,8 +95,5 @@ function createMemoryRepository(initialNotes: Note[] = []): NotesRepository {
     delete: async (id) => {
       notes = notes.filter((note) => note.id !== id);
     },
-    getTags: async () => [
-      ...new Set(notes.flatMap((note) => note.tags)),
-    ].sort(),
   };
 }

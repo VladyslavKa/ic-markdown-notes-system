@@ -13,13 +13,6 @@ const firstNote: Note = {
   updatedAt: "2026-06-22T10:00:00.000Z",
 };
 
-const secondNote: Note = {
-  ...firstNote,
-  id: "note-2",
-  title: "Second note",
-  tags: ["personal", "shared"],
-};
-
 export function describeNotesRepository(
   name: string,
   createRepository: RepositoryFactory,
@@ -65,17 +58,6 @@ export function describeNotesRepository(
       await repository.delete(firstNote.id);
 
       await expect(repository.getAll()).resolves.toEqual([]);
-    });
-
-    it("returns unique sorted tags", async () => {
-      await repository.create(firstNote);
-      await repository.create(secondNote);
-
-      await expect(repository.getTags()).resolves.toEqual([
-        "personal",
-        "shared",
-        "work",
-      ]);
     });
   });
 }

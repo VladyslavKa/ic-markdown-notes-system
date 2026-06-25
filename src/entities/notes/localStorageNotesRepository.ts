@@ -51,10 +51,4 @@ export const localStorageNotesRepository: NotesRepository = {
       notes.filter((note) => note.id !== id),
     );
   },
-
-  getTags: async () => {
-    const notes = await getNotes();
-
-    return [...new Set(notes.flatMap((note) => note.tags ?? []))].sort();
-  },
 };

@@ -6,5 +6,4 @@ export interface NotesRepository {
   create: (note: Note) => Promise<void>;
   update: (id: string, patch: Partial<Note>) => Promise<Note | null>;
   delete: (id: string) => Promise<void>;
-  getTags: () => Promise<string[]>;
 }
