@@ -10,7 +10,7 @@ export default function ExportNote({ note }: ExportNoteProps) {
   const handleExport = () => {
     const markdown = `# ${note.title}
 
-${note.body}
+${note.content}
 
 ${note.tags.length > 0 ? `Tags: ${note.tags.join(", ")}` : ""}
 

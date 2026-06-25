@@ -15,7 +15,7 @@ export default function NoteItemCreatePage() {
   const initialNote = {
     id: crypto.randomUUID(),
     title: "",
-    body: "",
+    content: "",
     tags: [],
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),

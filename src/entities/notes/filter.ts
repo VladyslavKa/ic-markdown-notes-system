@@ -18,7 +18,7 @@ export function filterNotes(
     const matchesSearch =
       !query ||
       note.title.toLowerCase().includes(query) ||
-      note.body.toLowerCase().includes(query);
+      note.content.toLowerCase().includes(query);
 
     const matchesTags = tags.every((tag) =>
       (note.tags ?? []).includes(tag),

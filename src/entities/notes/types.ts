@@ -2,7 +2,7 @@ export interface Note {
   id: string;
   title: string;
   tags: string[];
-  body: string;
+  content: string;
   createdAt: string;
   updatedAt: string;
 }

@@ -4,26 +4,8 @@ import type { Note } from "./types";
 
 const NOTES_KEY = "ic_notes";
 
-type StoredNote = Omit<Note, "body"> & {
-  body?: string;
-  content?: string;
-};
-
 async function getNotes() {
-  const storedNotes = (await getDataByKey<StoredNote[]>(NOTES_KEY)) ?? [];
-  const hasLegacyNotes = storedNotes.some(
-    (note) => note.body === undefined && note.content !== undefined,
-  );
-  const notes = storedNotes.map(({ content, ...note }) => ({
-    ...note,
-    body: note.body ?? content ?? "",
-  }));
-
-  if (hasLegacyNotes) {
-    await setDataByKey<Note[]>(NOTES_KEY, notes);
-  }
-
-  return notes;
+  return (await getDataByKey<Note[]>(NOTES_KEY)) ?? [];
 }
 
 export const localStorageNotesRepository: NotesRepository = {

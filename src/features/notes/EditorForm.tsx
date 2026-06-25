@@ -4,7 +4,7 @@ import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  NOTE_BODY_MAX_LENGTH,
+  NOTE_CONTENT_MAX_LENGTH,
   NOTE_TITLE_MAX_LENGTH,
 } from "@/entities/notes/const";
 import type { Note } from "@/entities/notes/types";
@@ -27,13 +27,15 @@ export default function NoteEditorForm({
     e.preventDefault();
     const form = e.currentTarget;
     const titleInput = form.elements.namedItem("title") as HTMLInputElement;
-    const bodyInput = form.elements.namedItem("body") as HTMLTextAreaElement;
+    const contentInput = form.elements.namedItem(
+      "content",
+    ) as HTMLTextAreaElement;
 
     titleInput.setCustomValidity(
       model.title.trim() ? "" : "Title is required.",
     );
-    bodyInput.setCustomValidity(
-      model.body.trim() ? "" : "Body is required.",
+    contentInput.setCustomValidity(
+      model.content.trim() ? "" : "Content is required.",
     );
 
     if (!form.reportValidity()) return;
@@ -85,20 +87,20 @@ export default function NoteEditorForm({
           </Field>
 
           <Field>
-            <FieldLabel htmlFor="body">
-              Body*
+            <FieldLabel htmlFor="content">
+              Content*
             </FieldLabel>
             <Textarea
-              id="body"
-              name="body"
-              value={model.body}
+              id="content"
+              name="content"
+              value={model.content}
               className="mt-1 max-h-[50vh] resize-y"
-              maxLength={NOTE_BODY_MAX_LENGTH}
+              maxLength={NOTE_CONTENT_MAX_LENGTH}
               required
               onChange={handleChangeField}
             />
             <FieldDescription className="text-right">
-              {model.body.length} / {NOTE_BODY_MAX_LENGTH}
+              {model.content.length} / {NOTE_CONTENT_MAX_LENGTH}
             </FieldDescription>
           </Field>
 
